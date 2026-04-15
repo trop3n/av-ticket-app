@@ -1,0 +1,183 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum UserRole {
+  ADMIN
+  TECHNICIAN
+  REQUESTER
+}
+
+enum DepartmentSlug {
+  AV
+  ENGINEERING
+  TECH_SUPPORT
+}
+
+enum TicketStatus {
+  NEW
+  IN_PROGRESS
+  REVIEW
+  DONE
+  CANCELLED
+}
+
+enum TicketPriority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+model User {
+  id            String    @id @default(cuid())
+  name          String?
+  email         String    @unique
+  emailVerified DateTime?
+  image         String?
+  role          UserRole  @default(REQUESTER)
+  departmentId  String?
+
+  department        Department?        @relation(fields: [departmentId], references: [id])
+  accounts          Account[]
+  sessions          Session[]
+  submittedTickets  Ticket[]           @relation("TicketSubmitter")
+  assignments       TicketAssignment[]
+  comments          Comment[]
+  activityLogs      ActivityLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Account {
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String?
+  access_token      String?
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String?
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@id([provider, providerAccountId])
+}
+
+model Session {
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model VerificationToken {
+  identifier String
+  token      String
+  expires    DateTime
+
+  @@id([identifier, token])
+}
+
+model Department {
+  id   String         @id @default(cuid())
+  name String
+  slug DepartmentSlug @unique
+
+  users   User[]
+  tickets Ticket[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Ticket {
+  id           String         @id @default(cuid())
+  number       Int            @unique @default(autoincrement())
+  title        String
+  description  String
+  status       TicketStatus   @default(NEW)
+  priority     TicketPriority @default(MEDIUM)
+  departmentId String
+  submitterId  String
+
+  department  Department         @relation(fields: [departmentId], references: [id])
+  submitter   User               @relation("TicketSubmitter", fields: [submitterId], references: [id])
+  assignments TicketAssignment[]
+  comments    Comment[]
+  attachments Attachment[]
+  activityLog ActivityLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([departmentId, status])
+  @@index([submitterId])
+}
+
+model TicketAssignment {
+  id       String @id @default(cuid())
+  ticketId String
+  userId   String
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+
+  @@unique([ticketId, userId])
+}
+
+model Comment {
+  id       String @id @default(cuid())
+  body     String
+  ticketId String
+  authorId String
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  author User   @relation(fields: [authorId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Attachment {
+  id       String @id @default(cuid())
+  filename String
+  path     String
+  mimetype String
+  size     Int
+  ticketId String
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
+
+model ActivityLog {
+  id       String @id @default(cuid())
+  action   String
+  details  Json?
+  ticketId String
+  userId   String
+
+  ticket Ticket @relation(fields: [ticketId], references: [id], onDelete: Cascade)
+  user   User   @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+}
