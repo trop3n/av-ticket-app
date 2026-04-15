@@ -1,6 +1,7 @@
 import "dotenv/config"
 import { PrismaClient } from "@prisma/client"
 import { PrismaPg } from "@prisma/adapter-pg"
+import bcrypt from "bcryptjs"
 
 const adapter = new PrismaPg({ connectionString: process.env.DATABASE_URL! })
 const prisma = new PrismaClient({ adapter })
@@ -27,7 +28,9 @@ async function main() {
 
   console.log(`Seeded ${departments.length} departments`)
 
-  // Create admin user (will be linked to SSO on first login)
+  // Create admin user with default password
+  const hashedPassword = await bcrypt.hash("admin1234", 12)
+
   const admin = await prisma.user.upsert({
     where: { email: "admin@example.com" },
     update: {},
@@ -35,6 +38,7 @@ async function main() {
       email: "admin@example.com",
       name: "Admin User",
       role: "ADMIN",
+      password: hashedPassword,
     },
   })
 
