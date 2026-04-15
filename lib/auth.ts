@@ -4,8 +4,8 @@ import MicrosoftEntraID from "next-auth/providers/microsoft-entra-id"
 import { PrismaAdapter } from "@auth/prisma-adapter"
 import { prisma } from "@/lib/prisma"
 import bcrypt from "bcryptjs"
-import type { UserRole } from "@prisma/client"
 import type { Provider } from "next-auth/providers"
+import { authConfig } from "./auth.config"
 
 const providers: Provider[] = [
   Credentials({
@@ -45,12 +45,11 @@ if (
 }
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  ...authConfig,
   adapter: PrismaAdapter(prisma),
   providers,
-  session: {
-    strategy: "jwt",
-  },
   callbacks: {
+    ...authConfig.callbacks,
     async jwt({ token, user }) {
       if (user?.id) {
         const dbUser = await prisma.user.findUnique({
@@ -64,15 +63,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       }
       return token
     },
-    async session({ session, token }) {
-      session.user.id = token.sub!
-      session.user.role = token.role as UserRole
-      session.user.departmentId = token.departmentId as string | null
-      return session
-    },
-  },
-  pages: {
-    signIn: "/auth/signin",
   },
 })
 
@@ -82,16 +72,3 @@ export const entraIdConfigured = !!(
   process.env.AUTH_MICROSOFT_ENTRA_ID_SECRET &&
   process.env.AUTH_MICROSOFT_ENTRA_ID_TENANT_ID
 )
-
-declare module "next-auth" {
-  interface Session {
-    user: {
-      id: string
-      name?: string | null
-      email?: string | null
-      image?: string | null
-      role: UserRole
-      departmentId: string | null
-    }
-  }
-}

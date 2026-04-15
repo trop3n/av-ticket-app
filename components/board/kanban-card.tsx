@@ -31,9 +31,16 @@ export function KanbanCard({
       >
         <CardContent className="p-3 space-y-2">
           <div className="flex items-start justify-between gap-2">
-            <span className="text-xs text-muted-foreground">
-              #{ticket.number}
-            </span>
+            <div className="flex flex-col gap-0.5">
+              <span className="text-xs text-muted-foreground">
+                #{ticket.number}
+              </span>
+              {ticket.department && (
+                <span className="text-[10px] text-muted-foreground font-medium">
+                  {ticket.department.name}
+                </span>
+              )}
+            </div>
             <Badge className={`text-[10px] px-1.5 py-0 ${priorityColors[ticket.priority]}`}>
               {ticket.priority}
             </Badge>

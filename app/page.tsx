@@ -2,8 +2,7 @@ import { redirect } from "next/navigation"
 import { prisma } from "@/lib/prisma"
 import { auth } from "@/lib/auth"
 import { StatsCards, type DashboardStats } from "@/components/dashboard/stats-cards"
-import { RecentTickets } from "@/components/dashboard/recent-tickets"
-import { DepartmentSummary } from "@/components/dashboard/department-summary"
+import { KanbanBoard } from "@/components/board/kanban-board"
 import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { PlusCircle } from "lucide-react"
@@ -27,9 +26,12 @@ export default async function DashboardPage() {
 
   const stats: DashboardStats = { total, open, done, urgent }
 
-  // Recent tickets
-  const recentTickets = await prisma.ticket.findMany({
-    where: ticketWhere,
+  // Fetch all non-CANCELLED tickets for the board
+  const tickets = await prisma.ticket.findMany({
+    where: {
+      ...ticketWhere,
+      status: { not: "CANCELLED" },
+    },
     include: {
       submitter: { select: { id: true, name: true, email: true, image: true } },
       department: true,
@@ -41,32 +43,7 @@ export default async function DashboardPage() {
       _count: { select: { comments: true, attachments: true } },
     },
     orderBy: { createdAt: "desc" },
-    take: 10,
   })
-
-  // Department summary (for technicians/admins)
-  let departmentSummaries: { name: string; slug: string; total: number; open: number; done: number }[] = []
-  if (!isRequester) {
-    const departments = await prisma.department.findMany()
-    departmentSummaries = await Promise.all(
-      departments.map(async (dept) => {
-        const [deptTotal, deptOpen, deptDone] = await Promise.all([
-          prisma.ticket.count({ where: { departmentId: dept.id } }),
-          prisma.ticket.count({
-            where: { departmentId: dept.id, status: { in: ["NEW", "IN_PROGRESS", "REVIEW"] } },
-          }),
-          prisma.ticket.count({ where: { departmentId: dept.id, status: "DONE" } }),
-        ])
-        return {
-          name: dept.name,
-          slug: dept.slug,
-          total: deptTotal,
-          open: deptOpen,
-          done: deptDone,
-        }
-      })
-    )
-  }
 
   return (
     <div className="container py-8 space-y-6">
@@ -87,11 +64,7 @@ export default async function DashboardPage() {
 
       <StatsCards stats={stats} />
 
-      {!isRequester && departmentSummaries.length > 0 && (
-        <DepartmentSummary departments={departmentSummaries} />
-      )}
-
-      <RecentTickets tickets={recentTickets} />
+      <KanbanBoard initialTickets={tickets} canDrag={!isRequester} />
     </div>
   )
 }

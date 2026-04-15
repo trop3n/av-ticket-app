@@ -23,9 +23,11 @@ type ColumnId = (typeof COLUMNS)[number]["id"]
 export function KanbanBoard({
   initialTickets,
   departmentSlug,
+  canDrag = true,
 }: {
   initialTickets: TicketListItem[]
-  departmentSlug: string
+  departmentSlug?: string
+  canDrag?: boolean
 }) {
   const [tickets, setTickets] = useState(initialTickets)
 
@@ -98,6 +100,7 @@ export function KanbanBoard({
             id={col.id}
             label={col.label}
             tickets={columnTickets(col.id)}
+            canDrag={canDrag}
           />
         ))}
       </div>

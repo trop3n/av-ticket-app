@@ -8,10 +8,12 @@ export function KanbanColumn({
   id,
   label,
   tickets,
+  canDrag = true,
 }: {
   id: string
   label: string
   tickets: TicketListItem[]
+  canDrag?: boolean
 }) {
   return (
     <div className="flex-shrink-0 w-72">
@@ -21,32 +23,40 @@ export function KanbanColumn({
           {tickets.length}
         </span>
       </div>
-      <Droppable droppableId={id}>
-        {(provided, snapshot) => (
-          <div
-            ref={provided.innerRef}
-            {...provided.droppableProps}
-            className={`space-y-2 min-h-[200px] p-2 rounded-lg transition-colors ${
-              snapshot.isDraggingOver ? "bg-accent/50" : "bg-muted/30"
-            }`}
-          >
-            {tickets.map((ticket, index) => (
-              <Draggable key={ticket.id} draggableId={ticket.id} index={index}>
-                {(provided, snapshot) => (
-                  <div
-                    ref={provided.innerRef}
-                    {...provided.draggableProps}
-                    {...provided.dragHandleProps}
-                  >
-                    <KanbanCard ticket={ticket} isDragging={snapshot.isDragging} />
-                  </div>
-                )}
-              </Draggable>
-            ))}
-            {provided.placeholder}
-          </div>
-        )}
-      </Droppable>
+      {canDrag ? (
+        <Droppable droppableId={id}>
+          {(provided, snapshot) => (
+            <div
+              ref={provided.innerRef}
+              {...provided.droppableProps}
+              className={`space-y-2 min-h-[200px] p-2 rounded-lg transition-colors ${
+                snapshot.isDraggingOver ? "bg-accent/50" : "bg-muted/30"
+              }`}
+            >
+              {tickets.map((ticket, index) => (
+                <Draggable key={ticket.id} draggableId={ticket.id} index={index}>
+                  {(provided, snapshot) => (
+                    <div
+                      ref={provided.innerRef}
+                      {...provided.draggableProps}
+                      {...provided.dragHandleProps}
+                    >
+                      <KanbanCard ticket={ticket} isDragging={snapshot.isDragging} />
+                    </div>
+                  )}
+                </Draggable>
+              ))}
+              {provided.placeholder}
+            </div>
+          )}
+        </Droppable>
+      ) : (
+        <div className="space-y-2 min-h-[200px] p-2 rounded-lg bg-muted/30">
+          {tickets.map((ticket) => (
+            <KanbanCard key={ticket.id} ticket={ticket} isDragging={false} />
+          ))}
+        </div>
+      )}
     </div>
   )
 }
