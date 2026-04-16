@@ -55,7 +55,7 @@ export default async function DashboardPage() {
           </p>
         </div>
         <Link href="/tickets/new">
-          <Button>
+          <Button variant="cta">
             <PlusCircle className="mr-2 h-4 w-4" />
             New Ticket
           </Button>
