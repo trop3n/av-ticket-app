@@ -14,13 +14,13 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { LiveIndicator } from "@/components/shared/live-indicator"
 import {
   LayoutDashboard,
   Kanban,
   PlusCircle,
   Shield,
   LogOut,
-  User,
 } from "lucide-react"
 
 const navItems = [
@@ -70,7 +70,8 @@ export function Navbar({ session }: { session: Session }) {
           })}
         </nav>
 
-        <div className="ml-auto">
+        <div className="ml-auto flex items-center gap-3">
+          <LiveIndicator />
           <DropdownMenu>
             <DropdownMenuTrigger
               className="relative h-8 w-8 rounded-full focus:outline-none"

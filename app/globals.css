@@ -9,6 +9,21 @@
   --color-foreground: var(--foreground);
   --color-accent-cta: var(--accent-cta);
   --color-accent-cta-foreground: var(--accent-cta-foreground);
+  --color-status-new: var(--status-new);
+  --color-status-new-foreground: var(--status-new-foreground);
+  --color-status-in-progress: var(--status-in-progress);
+  --color-status-in-progress-foreground: var(--status-in-progress-foreground);
+  --color-status-review: var(--status-review);
+  --color-status-review-foreground: var(--status-review-foreground);
+  --color-status-done: var(--status-done);
+  --color-status-done-foreground: var(--status-done-foreground);
+  --color-status-cancelled: var(--status-cancelled);
+  --color-status-cancelled-foreground: var(--status-cancelled-foreground);
+  --color-priority-low: var(--priority-low);
+  --color-priority-medium: var(--priority-medium);
+  --color-priority-high: var(--priority-high);
+  --color-priority-urgent: var(--priority-urgent);
+  --color-priority-urgent-foreground: var(--priority-urgent-foreground);
   --font-sans: var(--font-sans);
   --font-mono: var(--font-geist-mono);
   --font-heading: var(--font-sans);
@@ -74,7 +89,7 @@
   --chart-3: oklch(0.439 0 0);
   --chart-4: oklch(0.371 0 0);
   --chart-5: oklch(0.269 0 0);
-  --radius: 0.625rem;
+  --radius: 0.75rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
   --sidebar-primary: oklch(0.205 0 0);
@@ -85,6 +100,21 @@
   --sidebar-ring: oklch(0.708 0 0);
   --accent-cta: oklch(0.705 0.213 47.604);
   --accent-cta-foreground: oklch(1 0 0);
+  --status-new: oklch(0.70 0.13 245);
+  --status-new-foreground: oklch(1 0 0);
+  --status-in-progress: oklch(0.75 0.15 85);
+  --status-in-progress-foreground: oklch(0.20 0 0);
+  --status-review: oklch(0.68 0.17 295);
+  --status-review-foreground: oklch(1 0 0);
+  --status-done: oklch(0.72 0.17 150);
+  --status-done-foreground: oklch(0.20 0 0);
+  --status-cancelled: var(--muted-foreground);
+  --status-cancelled-foreground: oklch(1 0 0);
+  --priority-low: var(--muted-foreground);
+  --priority-medium: oklch(0.70 0.13 245);
+  --priority-high: oklch(0.78 0.15 75);
+  --priority-urgent: oklch(0.58 0.22 25);
+  --priority-urgent-foreground: oklch(1 0 0);
 }
 
 .dark {
@@ -121,6 +151,21 @@
   --sidebar-ring: oklch(0.556 0 0);
   --accent-cta: oklch(0.705 0.213 47.604);
   --accent-cta-foreground: oklch(1 0 0);
+  --status-new: oklch(0.62 0.15 245);
+  --status-new-foreground: oklch(1 0 0);
+  --status-in-progress: oklch(0.70 0.16 85);
+  --status-in-progress-foreground: oklch(0.15 0 0);
+  --status-review: oklch(0.62 0.18 295);
+  --status-review-foreground: oklch(1 0 0);
+  --status-done: oklch(0.65 0.18 150);
+  --status-done-foreground: oklch(0.15 0 0);
+  --status-cancelled: var(--muted-foreground);
+  --status-cancelled-foreground: oklch(0.15 0 0);
+  --priority-low: var(--muted-foreground);
+  --priority-medium: oklch(0.62 0.15 245);
+  --priority-high: oklch(0.72 0.17 75);
+  --priority-urgent: oklch(0.62 0.24 25);
+  --priority-urgent-foreground: oklch(1 0 0);
 }
 
 @layer base {
